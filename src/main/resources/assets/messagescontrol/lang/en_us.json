@@ -1,0 +1,13 @@
+{
+  "itemGroup.messagescontrol": "Example Mod Tab",
+  "block.messagescontrol.example_block": "Example Block",
+  "item.messagescontrol.example_item": "Example Item",
+
+  "messagescontrol.configuration.title": "messagescontrol Configs",
+  "messagescontrol.configuration.section.messagescontrol.common.toml": "messagescontrol Configs",
+  "messagescontrol.configuration.section.messagescontrol.common.toml.title": "messagescontrol Configs",
+  "messagescontrol.configuration.items": "Item List",
+  "messagescontrol.configuration.logDirtBlock": "Log Dirt Block",
+  "messagescontrol.configuration.magicNumberIntroduction": "Magic Number Text",
+  "messagescontrol.configuration.magicNumber": "Magic Number"
+}
