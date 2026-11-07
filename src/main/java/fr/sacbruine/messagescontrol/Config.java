@@ -3,6 +3,9 @@ package fr.sacbruine.messagescontrol;
 import fr.sacbruine.messagescontrol.enums.MessageMode;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
+import java.util.List;
+import java.util.regex.Pattern;
+
 public class Config {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
@@ -72,6 +75,73 @@ public class Config {
 
     static {
         BUILDER.pop();
+    }
+    //endregion
+
+    //region Advancements
+    private static final String ADVANCEMENT_MESSAGE_HELP =
+            "Variables: {player}, {advancement} (translated title, vanilla hover kept), {advancement_id}, {type} (task, goal, challenge) | Colors: &e yellow, &a green, &c red, &7 gray, &l bold...";
+
+    // namespace: "minecraft", "create"... / id: "minecraft:story/mine_stone"
+    private static final Pattern NAMESPACE_PATTERN = Pattern.compile("[a-z0-9_.-]+");
+    private static final Pattern ADVANCEMENT_ID_PATTERN = Pattern.compile("[a-z0-9_.-]+:[a-z0-9_./-]+");
+
+    static {
+        BUILDER.comment("Message shown in chat when a player gets an advancement")
+                .comment("Only the chat message is affected: the advancement is still granted and the player's toast is still shown")
+                .push("advancements");
+    }
+
+    public static final ModConfigSpec.BooleanValue enableAdvancementMessage =
+            BUILDER.comment("true = shown, false = hidden")
+                    .define("enabled", true);
+
+    public static final ModConfigSpec.EnumValue<MessageMode> advancementMessageMode =
+            BUILDER.comment("VANILLA = default Minecraft message, CUSTOM = customMessage below")
+                    .defineEnum("mode", MessageMode.VANILLA);
+
+    public static final ModConfigSpec.ConfigValue<String> advancementCustomMessage =
+            BUILDER.comment(ADVANCEMENT_MESSAGE_HELP)
+                    .comment("A color before {advancement} recolors it (hover kept). Use &r before it to keep the vanilla color (green, purple for challenges)")
+                    .define("customMessage", "{player} has made the advancement {advancement}");
+
+    // Sub-section [advancements.filters]
+    static {
+        BUILDER.comment("Hide some advancement messages. The whitelist always wins over these filters")
+                .push("filters");
+    }
+
+    public static final ModConfigSpec.BooleanValue hideAdvancementTasks =
+            BUILDER.comment("true = hide messages for 'task' advancements (most common ones). Example: \"Stone Age\" (minecraft:story/mine_stone)")
+                    .define("hideTasks", false);
+
+    public static final ModConfigSpec.BooleanValue hideAdvancementGoals =
+            BUILDER.comment("true = hide messages for 'goal' advancements. Example: \"The End... Again...\" (minecraft:end/respawn_dragon)")
+                    .define("hideGoals", false);
+
+    public static final ModConfigSpec.BooleanValue hideAdvancementChallenges =
+            BUILDER.comment("true = hide messages for 'challenge' advancements. Example: \"Monsters Hunted\" (minecraft:adventure/kill_all_mobs)")
+                    .define("hideChallenges", false);
+
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> hiddenAdvancementNamespaces =
+            BUILDER.comment("Hide every advancement from these namespaces. Example: [\"create\", \"minecraft\"]")
+                    .defineListAllowEmpty("hiddenNamespaces", List.of(), () -> "minecraft",
+                            o -> o instanceof String s && NAMESPACE_PATTERN.matcher(s).matches());
+
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> hiddenAdvancementIds =
+            BUILDER.comment("Hide these exact advancements. Example: [\"minecraft:story/mine_stone\"]")
+                    .defineListAllowEmpty("hiddenAdvancements", List.of(), () -> "minecraft:story/mine_stone",
+                            o -> o instanceof String s && ADVANCEMENT_ID_PATTERN.matcher(s).matches());
+
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> advancementWhitelist =
+            BUILDER.comment("Always shown, even if hidden by a filter above")
+                    .comment("Accepts exact ids (\"minecraft:end/kill_dragon\") or whole namespaces (\"create\")")
+                    .defineListAllowEmpty("whitelist", List.of(), () -> "minecraft:end/kill_dragon",
+                            o -> o instanceof String s
+                                    && (ADVANCEMENT_ID_PATTERN.matcher(s).matches() || NAMESPACE_PATTERN.matcher(s).matches()));
+
+    static {
+        BUILDER.pop(2); // filters + advancements
     }
     //endregion
 
