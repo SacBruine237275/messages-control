@@ -24,6 +24,20 @@ public class Config {
                     .define("joinCustomMessage", "&e{display_name} joined the game ({online}/{max})");
     //endregion
 
+    //region First Join
+    public static final ModConfigSpec.BooleanValue enableFirstJoinMessage =
+            BUILDER.comment("Enable a special message when a player joins the server for the first time")
+                    .comment("Minecraft has no default first join message, so firstJoinCustomMessage is always used when enabled")
+                    .comment("true = firstJoinCustomMessage shown, false = regular join message used (see join settings)")
+                    .define("enableFirstJoinMessage", false);
+
+    public static final ModConfigSpec.ConfigValue<String> firstJoinCustomMessage =
+            BUILDER.comment("Custom first join message (if enableFirstJoinMessage = true)")
+                    .comment("Variables: {player}, {display_name}, {online}, {max}")
+                    .comment("Colors: &e = yellow, &a = green, &c = red, &7 = gray, &l = bold...")
+                    .define("firstJoinCustomMessage", "&e{display_name} joined the game for the first time ({online}/{max})");
+    //endregion
+
     //region Leave
     public static final ModConfigSpec.BooleanValue enableLeaveMessage =
             BUILDER.comment("Enable the message when a player leaves")
