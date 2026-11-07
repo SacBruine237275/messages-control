@@ -66,6 +66,7 @@ public abstract class PlayerListMixin {
         }
     }
 
+    @Unique 
     private void messagescontrol$handleMessage(boolean enabled, MessageMode mode, String template,
             TranslatableContents vanillaMessage,
             int playerOffset, boolean bypassHiddenChat, CallbackInfo ci) {
@@ -83,6 +84,7 @@ public abstract class PlayerListMixin {
         // VANILLA: do nothing, Minecraft sends its own message
     }
 
+    @Unique 
     private String messagescontrol$formatMessage(String message, Component displayNameComponent, int playerOffset) {
         PlayerList self = (PlayerList) (Object) this;
 
