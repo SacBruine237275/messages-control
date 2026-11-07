@@ -3,13 +3,12 @@ package fr.sacbruine.messagescontrol.mixin;
 import fr.sacbruine.messagescontrol.Config;
 import fr.sacbruine.messagescontrol.enums.MessageMode;
 import fr.sacbruine.messagescontrol.helpers.AdvancementContext;
-import net.minecraft.IdentifierException;
+import fr.sacbruine.messagescontrol.helpers.MessageFormatter;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.players.PlayerList;
@@ -21,7 +20,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 @Mixin(PlayerList.class)
@@ -86,8 +88,7 @@ public abstract class PlayerListMixin {
         if (mode == MessageMode.CUSTOM) {
             ci.cancel();
             Component displayName = (Component) vanillaMessage.getArgs()[0];
-            Component customMessage = Component
-                    .literal(messagescontrol$formatMessage(template, displayName, playerOffset));
+            Component customMessage = messagescontrol$formatMessage(template, displayName, playerOffset);
             this.broadcastSystemMessage(customMessage, p -> customMessage, bypassHiddenChat);
         }
         // VANILLA: do nothing, Minecraft sends its own message
@@ -125,27 +126,54 @@ public abstract class PlayerListMixin {
             }
         }
 
-        messagescontrol$handleMessage(!hidden, Config.advancementMessageMode.get(),
-                Config.advancementCustomMessage.get(), vanillaMessage, 0, bypassHiddenChat, ci);
-
+        if (hidden) {
+            ci.cancel();
+            return;
+        }
+        if (Config.advancementMessageMode.get() == MessageMode.CUSTOM) {
+            ci.cancel();
+            Component customMessage = messagescontrol$formatAdvancementMessage(key, vanillaMessage, currentAdvancement);
+            this.broadcastSystemMessage(customMessage, p -> customMessage, bypassHiddenChat);
+        }
+        // VANILLA: do nothing, Minecraft sends its own message
     }
 
     @Unique
-    private String messagescontrol$formatMessage(String message, Component displayNameComponent, int playerOffset) {
+    private Component messagescontrol$formatAdvancementMessage(String key, TranslatableContents vanillaMessage,
+            @Nullable AdvancementHolder advancement) {
+        Object[] args = vanillaMessage.getArgs();
+
+        return MessageFormatter.format(Config.advancementCustomMessage.get(), Map.of(
+                "player", Component.literal(messagescontrol$playerName(messagescontrol$toComponent(args[0]))),
+                "advancement", messagescontrol$toComponent(args[1]), // vanilla title, keeps color + hover
+                "advancement_id", Component.literal(advancement != null ? advancement.id().toString() : ""),
+                "type", Component.literal(key.substring(key.lastIndexOf('.') + 1)))); // task, goal, challenge
+    }
+
+    // Translation args are usually Components, but can be plain Strings/numbers
+    @Unique
+    private static Component messagescontrol$toComponent(Object arg) {
+        return arg instanceof Component component ? component : Component.literal(String.valueOf(arg));
+    }
+
+    @Unique
+    private Component messagescontrol$formatMessage(String message, Component displayNameComponent, int playerOffset) {
         PlayerList self = (PlayerList) (Object) this;
 
         int onlinePlayers = self.getPlayerCount() + playerOffset;
         int maxPlayers = self.getMaxPlayers();
-        String displayName = displayNameComponent.getString();
+
+        return MessageFormatter.format(message, Map.of(
+                "player", Component.literal(messagescontrol$playerName(displayNameComponent)),
+                "display_name", Component.literal(displayNameComponent.getString()),
+                "online", Component.literal(String.valueOf(onlinePlayers)),
+                "max", Component.literal(String.valueOf(maxPlayers))));
+    }
+
+    // Real username: the display name's insertion holds it (the display name itself can be a nickname/team prefix)
+    @Unique
+    private static String messagescontrol$playerName(Component displayNameComponent) {
         String insertion = displayNameComponent.getStyle().getInsertion();
-        String playerName = insertion != null ? insertion : displayName;
-
-        return message
-                .replace("{player}", playerName)
-                .replace("{display_name}", displayName)
-                .replace("{online}", String.valueOf(onlinePlayers))
-                .replace("{max}", String.valueOf(maxPlayers))
-                .replaceAll("&([0-9a-fk-or])", "§$1"); // &e -> §e (Minecraft color codes)
-
+        return insertion != null ? insertion : displayNameComponent.getString();
     }
 }

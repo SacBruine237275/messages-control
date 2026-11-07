@@ -102,6 +102,7 @@ public class Config {
 
     public static final ModConfigSpec.ConfigValue<String> advancementCustomMessage =
             BUILDER.comment(ADVANCEMENT_MESSAGE_HELP)
+                    .comment("A color before {advancement} recolors it (hover kept). Use &r before it to keep the vanilla color (green, purple for challenges)")
                     .define("customMessage", "{player} has made the advancement {advancement}");
 
     // Sub-section [advancements.filters]
