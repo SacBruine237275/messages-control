@@ -42,17 +42,21 @@ A NeoForge mod that lets server admins show, hide or rewrite the messages Minecr
 
 ### Requirements
 
-| Component | Version |
-|---|---|
-| Minecraft | 26.1.2 to 26.2 |
-| NeoForge | 26.1.2.126 or newer |
-| Java | 25 |
+| Minecraft | NeoForge | Java | Config file |
+|---|---|---|---|
+| 26.3 | 26.3.0.76 or newer | 25 | `config/messagescontrol-synced.toml` |
+| 26.1.2 to 26.2 | 26.1.2.126 or newer | 25 | `config/messagescontrol-server.toml` |
+| 1.21.11 | 21.11.42 or newer | 21 | `config/messagescontrol-server.toml` |
+
+Each row has its own jar: a jar only works on the Minecraft versions of its row.
 
 ### Installation
 
-1. Download the jar from [Modrinth](https://modrinth.com/project/messages-control).
+1. Download the jar for your Minecraft version from [Modrinth](https://modrinth.com/project/messages-control).
 2. Put it in your server's `mods` folder.
-3. Start the server once to generate `config/messagescontrol-server.toml`.
+3. Start the server once to generate the config file listed in [Requirements](#requirements).
+
+When you update to Minecraft 26.3, copy your settings from `messagescontrol-server.toml` to `messagescontrol-synced.toml`.
 
 The mod only changes messages on the server, so players don't need to install it.
 
@@ -185,17 +189,21 @@ Un mod NeoForge qui permet aux administrateurs de serveur d'afficher, de masquer
 
 ### Prérequis
 
-| Composant | Version |
-|---|---|
-| Minecraft | 26.1.2 à 26.2 |
-| NeoForge | 26.1.2.126 ou plus récent |
-| Java | 25 |
+| Minecraft | NeoForge | Java | Fichier de config |
+|---|---|---|---|
+| 26.3 | 26.3.0.76 ou plus récent | 25 | `config/messagescontrol-synced.toml` |
+| 26.1.2 à 26.2 | 26.1.2.126 ou plus récent | 25 | `config/messagescontrol-server.toml` |
+| 1.21.11 | 21.11.42 ou plus récent | 21 | `config/messagescontrol-server.toml` |
+
+Chaque ligne a son propre jar : un jar ne fonctionne que sur les versions de Minecraft de sa ligne.
 
 ### Installer le mod
 
-1. Télécharge le jar sur [Modrinth](https://modrinth.com/project/messages-control).
+1. Télécharge le jar de ta version de Minecraft sur [Modrinth](https://modrinth.com/project/messages-control).
 2. Place-le dans le dossier `mods` de ton serveur.
-3. Démarre le serveur une fois pour générer `config/messagescontrol-server.toml`.
+3. Démarre le serveur une fois pour générer le fichier de config indiqué dans les [prérequis](#prérequis).
+
+Quand tu passes à Minecraft 26.3, copie tes réglages de `messagescontrol-server.toml` vers `messagescontrol-synced.toml`.
 
 Le mod ne modifie les messages que côté serveur, les joueurs n'ont donc pas besoin de l'installer.
 
