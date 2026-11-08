@@ -1,6 +1,7 @@
 package fr.sacbruine.messagescontrol.mixin;
 
 import fr.sacbruine.messagescontrol.Config;
+import fr.sacbruine.messagescontrol.MessagesControl;
 import fr.sacbruine.messagescontrol.constants.MessageKeys;
 import fr.sacbruine.messagescontrol.constants.PlayerCountOffsets;
 import fr.sacbruine.messagescontrol.enums.MessageMode;
@@ -11,6 +12,7 @@ import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
@@ -87,6 +89,7 @@ public abstract class PlayerListMixin {
             int playerOffset, boolean bypassHiddenChat, CallbackInfo ci) {
         if (!enabled) {
             ci.cancel(); // hidden
+            MessagesControl.logHiddenMessage(MutableComponent.create(vanillaMessage));
             return;
         }
         if (mode == MessageMode.CUSTOM) {
@@ -105,6 +108,7 @@ public abstract class PlayerListMixin {
 
         if (AdvancementMessages.isHidden(key, advancement)) {
             ci.cancel();
+            MessagesControl.logHiddenMessage(MutableComponent.create(vanillaMessage));
             return;
         }
         if (Config.advancementMessageMode.get() == MessageMode.CUSTOM) {

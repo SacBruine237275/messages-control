@@ -3,6 +3,7 @@ package fr.sacbruine.messagescontrol.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import fr.sacbruine.messagescontrol.Config;
+import fr.sacbruine.messagescontrol.MessagesControl;
 import fr.sacbruine.messagescontrol.helpers.DeathMessages;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,6 +23,8 @@ public abstract class ServerPlayerMixin {
             Operation<Void> original) {
         if (Config.enableDeathMessage.get()) {
             original.call(list, DeathMessages.resolve((ServerPlayer) (Object) this, message), bypassHiddenChat);
+        } else {
+            MessagesControl.logHiddenMessage(message);
         }
     }
 
@@ -31,6 +34,8 @@ public abstract class ServerPlayerMixin {
             Operation<Void> original) {
         if (Config.enableDeathMessage.get()) {
             original.call(list, player, DeathMessages.resolve((ServerPlayer) (Object) this, message));
+        } else {
+            MessagesControl.logHiddenMessage(message);
         }
     }
 
@@ -40,6 +45,8 @@ public abstract class ServerPlayerMixin {
             Operation<Void> original) {
         if (Config.enableDeathMessage.get()) {
             original.call(list, player, DeathMessages.resolve((ServerPlayer) (Object) this, message));
+        } else {
+            MessagesControl.logHiddenMessage(message);
         }
     }
 }

@@ -14,6 +14,10 @@ public class Config {
     private static final String MESSAGE_HELP =
             "Variables: {player}, {display_name}, {online}, {max} | Colors: &e yellow, &a green, &c red, &7 gray, &l bold...";
 
+    public static final ModConfigSpec.BooleanValue logToConsole =
+            BUILDER.comment("true = messages hidden in game are still written to the server console, for moderation")
+                    .define("logToConsole", true);
+
     // Static blocks run in order with the fields: each push/pop wraps the fields between them in a [section]
 
     //region Join
