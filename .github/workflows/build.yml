@@ -1,16 +1,32 @@
-name: Build
+name: Build & Release
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+      - 'mc/**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
+
+      - name: Get mod and Minecraft versions
+        id: version
+        run: |
+          MOD_VERSION=$(grep '^mod_version=' gradle.properties | cut -d'=' -f2 | tr -d '\r')
+          MC_VERSION=$(grep '^minecraft_version=' gradle.properties | cut -d'=' -f2 | tr -d '\r')
+          echo "mod=$MOD_VERSION" >> $GITHUB_OUTPUT
+          echo "mc=$MC_VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$MOD_VERSION-mc$MC_VERSION" >> $GITHUB_OUTPUT
 
       - name: Setup JDK 21
         uses: actions/setup-java@v4
@@ -21,10 +37,37 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      # This is needed to be able to run ./gradlew below
-      # You can run `git update-index --chmod +x gradlew` then remove this step.
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build --no-daemon
+
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: messagescontrol-${{ steps.version.outputs.mod }}-mc${{ steps.version.outputs.mc }}
+          path: build/libs/*.jar
+
+      - name: Check if this version is already released
+        id: existing
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "::notice::Tag $TAG already exists: nothing is published. Raise mod_version to create a release."
+            echo "tag_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "tag_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release
+        if: steps.existing.outputs.tag_exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: Messages Control ${{ steps.version.outputs.mod }} for Minecraft ${{ steps.version.outputs.mc }}
+          files: build/libs/*.jar
+          fail_on_unmatched_files: true
+          make_latest: ${{ github.ref_name == 'main' }}
