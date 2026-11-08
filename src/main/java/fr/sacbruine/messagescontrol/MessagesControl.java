@@ -15,7 +15,7 @@ public class MessagesControl {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public MessagesControl(ModContainer container){
-        container.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
+        container.registerConfig(ModConfig.Type.SYNCED, Config.SPEC);
     }
 
     public static void logHiddenMessage(Component message) {
