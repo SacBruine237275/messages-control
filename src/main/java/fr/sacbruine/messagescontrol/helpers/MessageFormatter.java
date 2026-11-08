@@ -1,11 +1,15 @@
 package fr.sacbruine.messagescontrol.helpers;
 
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import fr.sacbruine.messagescontrol.Config;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Builds a chat Component from a config template.
@@ -13,8 +17,14 @@ import java.util.Map;
  * - "{name}" is replaced by the matching Component. A color/format set in the template overrides its own,
  *   its hover is always kept. Use "&r" before a variable to keep its vanilla color.
  *   Unknown variables are left as is.
+ * - The value of an aliased variable is replaced by its entry in the [aliases] config, if any
  */
 public final class MessageFormatter {
+
+    private static final String DEFAULT_NAMESPACE = "minecraft:";
+
+    // Only variables with a known set of values: a player named "task" must not be renamed by a "task" alias
+    private static final Set<String> ALIASED_VARIABLES = Set.of("dimension", "type", "advancement_id");
 
     public static MutableComponent format(String template, Map<String, Component> variables) {
         MutableComponent result = Component.empty();
@@ -39,8 +49,12 @@ public final class MessageFormatter {
             if (c == '{') {
                 int end = template.indexOf('}', i);
                 if (end != -1) {
-                    Component value = variables.get(template.substring(i + 1, end));
+                    String name = template.substring(i + 1, end);
+                    Component value = variables.get(name);
                     if (value != null) {
+                        if (ALIASED_VARIABLES.contains(name)) {
+                            value = applyAlias(value);
+                        }
                         appendText(result, text, style);
                         // The template style wins (color, bold...), the variable keeps the rest (hover, vanilla color if none set)
                         result.append(value.copy().setStyle(style.applyTo(value.getStyle())));
@@ -66,6 +80,17 @@ public final class MessageFormatter {
     public static String playerName(Component displayNameComponent) {
         String insertion = displayNameComponent.getStyle().getInsertion();
         return insertion != null ? insertion : displayNameComponent.getString();
+    }
+
+    private static Component applyAlias(Component value) {
+        UnmodifiableConfig aliases = Config.aliases.get();
+        String text = value.getString();
+        // List path: a '.' in an id must not be read as a sub-section
+        Object alias = aliases.get(List.of(text));
+        if (alias == null && text.startsWith(DEFAULT_NAMESPACE)) {
+            alias = aliases.get(List.of(text.substring(DEFAULT_NAMESPACE.length())));
+        }
+        return alias != null ? Component.literal(String.valueOf(alias)).setStyle(value.getStyle()) : value;
     }
 
     private static void appendText(MutableComponent result, StringBuilder text, Style style) {
