@@ -177,7 +177,7 @@ public class Config {
     //region Aliases
     // Defined as a single value: the config spec would remove the keys of a regular section, since it doesn't know them in advance
     public static final ModConfigSpec.ConfigValue<UnmodifiableConfig> aliases =
-            BUILDER.comment("Replaces a variable's value with your own text, in every message. Example: task = \"quest\"")
+            BUILDER.comment("Replaces the value of {dimension}, {type} and {advancement_id} with your own text, in every message. Example: task = \"quest\"")
                     .comment("The minecraft: prefix is optional. Other mods need their full id. Ids containing ':' or '/' need quotes: \"mymod:my_dimension\" = \"My dimension\"")
                     .comment("Color codes are not supported here: set the color in the message, before the variable")
                     .define("aliases", Config::defaultAliases, o -> o instanceof UnmodifiableConfig);
