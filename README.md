@@ -44,9 +44,9 @@ A NeoForge mod that lets server admins show, hide or rewrite the messages Minecr
 
 | Component | Version |
 |---|---|
-| Minecraft | 1.21.11 |
-| NeoForge | 21.11.42 or newer |
-| Java | 21 |
+| Minecraft | 26.1.2 to 26.2 |
+| NeoForge | 26.1.2.126 or newer |
+| Java | 25 |
 
 ### Installation
 
@@ -187,9 +187,9 @@ Un mod NeoForge qui permet aux administrateurs de serveur d'afficher, de masquer
 
 | Composant | Version |
 |---|---|
-| Minecraft | 1.21.11 |
-| NeoForge | 21.11.42 ou plus récent |
-| Java | 21 |
+| Minecraft | 26.1.2 à 26.2 |
+| NeoForge | 26.1.2.126 ou plus récent |
+| Java | 25 |
 
 ### Installer le mod
 

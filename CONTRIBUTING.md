@@ -30,7 +30,7 @@ Don't push directly to `main`, `dev` or `mc/*`: open a pull request. Delete shor
 
 ### Making a change
 
-You need JDK 21.
+You need JDK 25.
 
 ```sh
 git switch dev
@@ -91,7 +91,7 @@ Ne pousse jamais directement sur `main`, `dev` ou `mc/*` : ouvre une pull reques
 
 ### Faire une modification
 
-Il te faut le JDK 21.
+Il te faut le JDK 25.
 
 ```sh
 git switch dev
