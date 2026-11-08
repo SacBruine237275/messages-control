@@ -57,6 +57,17 @@ public final class MessageFormatter {
         return result;
     }
 
+    // Translation args are usually Components, but can be plain Strings/numbers
+    public static Component toComponent(Object arg) {
+        return arg instanceof Component component ? component : Component.literal(String.valueOf(arg));
+    }
+
+    // Real username: the display name's insertion holds it (the display name itself can be a nickname/team prefix)
+    public static String playerName(Component displayNameComponent) {
+        String insertion = displayNameComponent.getStyle().getInsertion();
+        return insertion != null ? insertion : displayNameComponent.getString();
+    }
+
     private static void appendText(MutableComponent result, StringBuilder text, Style style) {
         if (!text.isEmpty()) {
             result.append(Component.literal(text.toString()).setStyle(style));
