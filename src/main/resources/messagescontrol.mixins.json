@@ -4,7 +4,9 @@
   "package": "fr.sacbruine.messagescontrol.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "PlayerListMixin"
+    "PlayerListMixin",
+    "PlayerAdvancementsMixin",
+    "ServerPlayerMixin"
   ],
   "client": [],
   "server": [],
