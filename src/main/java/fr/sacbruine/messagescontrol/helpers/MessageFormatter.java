@@ -6,6 +6,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 
 import java.util.List;
 import java.util.Map;
@@ -105,8 +106,9 @@ public final class MessageFormatter {
         if (formatting == ChatFormatting.RESET) {
             return Style.EMPTY;
         }
-        if (formatting.isColor()) {
-            return Style.EMPTY.withColor(formatting);
+        TextColor color = TextColor.fromLegacyFormat(formatting);
+        if (color != null) {
+            return Style.EMPTY.withColor(color);
         }
         return style.applyFormat(formatting);
     }
