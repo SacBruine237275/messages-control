@@ -23,7 +23,7 @@
 |---|---|---|
 | `main` | Latest stable release, for the newest supported Minecraft version | Nothing |
 | `dev` | Next release of `main`. Finished work waits here. | `main` |
-| `mc/<version>` | Maintained release for an older Minecraft version, for example `mc/1.21.1` | Nothing |
+| `mc/<version>` | Maintained release for an older Minecraft version, for example `mc/26.1` | Nothing |
 | `feat/...`, `fix/...`, `refactor/...`, `docs/...` | A single change | `dev`, or `mc/<version>` for a version-specific fix |
 
 Don't push directly to `main`, `dev` or `mc/*`: open a pull request. Delete short-lived branches once they are merged.
@@ -46,13 +46,13 @@ Open a pull request to `dev` and describe what you tested in game. The build mus
 A change that also applies to an older Minecraft version is copied after it is merged in `dev`:
 
 ```sh
-git switch mc/1.21.1
+git switch mc/26.1
 git pull
-git switch -c fix/my-fix-mc1.21.1
+git switch -c fix/my-fix-mc26.1
 git cherry-pick <commit>
 ```
 
-Open a pull request to `mc/1.21.1`. A bug that only exists on this version starts from the same branch, without the cherry-pick.
+Open a pull request to `mc/26.1`. A bug that only exists on this version starts from the same branch, without the cherry-pick.
 
 ### Releases
 
@@ -84,7 +84,7 @@ The same `mod_version` on two branches means the same features.
 |---|---|---|
 | `main` | Dernière version stable, pour la version de Minecraft la plus récente prise en charge | Aucune |
 | `dev` | Prochaine version de `main`. Le travail terminé attend ici. | `main` |
-| `mc/<version>` | Version maintenue pour une ancienne version de Minecraft, par exemple `mc/1.21.1` | Aucune |
+| `mc/<version>` | Version maintenue pour une ancienne version de Minecraft, par exemple `mc/26.1` | Aucune |
 | `feat/...`, `fix/...`, `refactor/...`, `docs/...` | Une seule modification | `dev`, ou `mc/<version>` pour un correctif propre à cette version |
 
 Ne pousse jamais directement sur `main`, `dev` ou `mc/*` : ouvre une pull request. Supprime les branches temporaires une fois mergées.
@@ -107,13 +107,13 @@ Ouvre une pull request vers `dev` et indique ce que tu as testé en jeu. Le buil
 Une modification qui concerne aussi une ancienne version de Minecraft est copiée une fois mergée dans `dev` :
 
 ```sh
-git switch mc/1.21.1
+git switch mc/26.1
 git pull
-git switch -c fix/mon-correctif-mc1.21.1
+git switch -c fix/mon-correctif-mc26.1
 git cherry-pick <commit>
 ```
 
-Ouvre une pull request vers `mc/1.21.1`. Un bug propre à cette version part de la même branche, sans le cherry-pick.
+Ouvre une pull request vers `mc/26.1`. Un bug propre à cette version part de la même branche, sans le cherry-pick.
 
 ### Les releases
 
