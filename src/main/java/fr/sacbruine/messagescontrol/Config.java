@@ -145,5 +145,32 @@ public class Config {
     }
     //endregion
 
+    //region Death
+    private static final String DEATH_MESSAGE_HELP =
+            "Variables: {player}, {death_message} (vanilla cause, translated), {dimension}, {x}, {y}, {z} | Colors: &e yellow, &a green, &c red, &7 gray, &l bold...";
+
+    static {
+        BUILDER.comment("Message shown in chat when a player dies")
+                .comment("Only the chat message is affected: the message on the player's death screen is not changed")
+                .push("death");
+    }
+
+    public static final ModConfigSpec.BooleanValue enableDeathMessage =
+            BUILDER.comment("true = shown, false = hidden")
+                    .define("enabled", true);
+
+    public static final ModConfigSpec.EnumValue<MessageMode> deathMessageMode =
+            BUILDER.comment("VANILLA = default Minecraft message, CUSTOM = customMessage below")
+                    .defineEnum("mode", MessageMode.VANILLA);
+
+    public static final ModConfigSpec.ConfigValue<String> deathCustomMessage =
+            BUILDER.comment(DEATH_MESSAGE_HELP)
+                    .define("customMessage", "&c{death_message}");
+
+    static {
+        BUILDER.pop();
+    }
+    //endregion
+
     static final ModConfigSpec SPEC = BUILDER.build();
 }
